@@ -33,6 +33,7 @@ public class GuessActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        // sets content view activity_guess.xml
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_guess);
 
@@ -45,9 +46,11 @@ public class GuessActivity extends AppCompatActivity {
         guessButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                // pulls whatever name was entered from edit text.
                 String name = nameEditText.getText().toString();
                 if (!name.isEmpty()) {
-                    makeAgifyRequest(name);
+                    // this method was used to fetch data from API
+                    makeAgifyRequest(name); // see below for implementation
                 } else {
                     Toast.makeText(GuessActivity.this, "Please enter a name", Toast.LENGTH_SHORT).show();
                 }
@@ -65,22 +68,28 @@ public class GuessActivity extends AppCompatActivity {
         });
     }
 
-    // Using Volley to to implement the API
+    // Using Volley library to essentially make a network request to the Agify API
+    // The response is then parsed and result is displayed in 'resultTextView'
+    // Notes: entry is saved to history via saveToHistory method
     private void makeAgifyRequest(String name) {
         String url = "https://api.agify.io?name=" + name;
 
         // Volley request queue
+        // About Volley: Android networking library
         RequestQueue requestQueue = Volley.newRequestQueue(this);
 
         // JSON object request to fetch data from API
         JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(
                 Request.Method.GET, url, null,
+                // when/if request is successful
                 new Response.Listener<JSONObject>() {
+                    // Parses JSON response, gets predicted age, displays message
+                    // additional functionalities: display message, save entry to history
+                    // clears 'nameEditText'
                     @Override
                     public void onResponse(JSONObject response) {
                         try {
                             int age = response.getInt("age");
-
                             // Displays results
                             String message = "Hello " + nameEditText.getText().toString() +
                                     ", your age is predicted to be " + age;
@@ -94,20 +103,19 @@ public class GuessActivity extends AppCompatActivity {
                         }
                     }
                 },
+                // if error occurs during request
                 new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
-                        // add error handling
                         Toast.makeText(GuessActivity.this, "Failed to fetch data", Toast.LENGTH_SHORT).show();
                     }
                 });
 
-        // adding request (to queue so that it will then be taken to execution)
+        // adding request to queue (so that it will then be taken to execution)
         requestQueue.add(jsonObjectRequest);
     }
 
     // Save entry in history via SharedPreferences (extra feature)
-    // Let's see if this works
     private void saveToHistory(String name, String age) {
         SharedPreferences preferences = getSharedPreferences("HistoryPreferences", Context.MODE_PRIVATE);
         Set<String> historySet = preferences.getStringSet("historySet", new HashSet<>());

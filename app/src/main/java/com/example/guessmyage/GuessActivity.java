@@ -102,6 +102,7 @@ public class GuessActivity extends AppCompatActivity {
                             String message = "Hello " + nameEditText.getText().toString() +
                                     ", your age is predicted to be " + age;
                             resultTextView.setText(message);
+                            nameEditText.getText().clear();
                         } catch (JSONException e) {
                             e.printStackTrace();
                             // Note for me: Toast class in Android allows program to give small messages to user

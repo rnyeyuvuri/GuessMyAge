@@ -119,14 +119,8 @@ public class GuessActivity extends AppCompatActivity {
     // Let's see if this works
     private void saveToHistory(String entry) {
         SharedPreferences preferences = getSharedPreferences("HistoryPreferences", Context.MODE_PRIVATE);
-
-        // Retrieve the existing set of history entries or create a new empty set
         Set<String> historySet = preferences.getStringSet("historySet", new HashSet<>());
-
-        // Add the new entry to the set
         historySet.add(entry);
-
-        // Save the updated set back to SharedPreferences
         preferences.edit().putStringSet("historySet", historySet).apply();
     }
 }

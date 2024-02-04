@@ -28,6 +28,7 @@
             android:name=".GuessActivity"
             android:exported="false"
             android:parentActivityName=".MainActivity" />
+        <activity android:name=".HistoryActivity"/>
     </application>
 
     <uses-permission android:name="android.permission.INTERNET" />

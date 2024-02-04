@@ -56,31 +56,6 @@ public class GuessActivity extends AppCompatActivity {
             }
         });
 
-        // sets click listener for "save" button
-        saveButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                String name = nameEditText.getText().toString();
-                String age = resultTextView.getText().toString().replaceAll("[^0-9]", "");
-
-                if (!name.isEmpty() && !age.isEmpty()) {
-                    String message = "If your name was " + name + ", you would be predicted to be " + age + " years old!";
-                    resultTextView.setText(message);
-
-                    // Save history
-                    saveToHistory(message);
-                    Toast.makeText(GuessActivity.this, "Data saved to history", Toast.LENGTH_SHORT).show();
-                } else if (age.isEmpty()) {
-                    String message = "Woah, " + name + " is so rare that we can't predict an age for you.";
-                    resultTextView.setText(message);
-                } else {
-                    // edit this
-                    Toast.makeText(GuessActivity.this, "No data to save", Toast.LENGTH_SHORT).show();
-                }
-                nameEditText.getText().clear();
-            }
-        });
-
         // adding navigation to history page
         Button viewHistoryButton = findViewById(R.id.viewHistoryButton);
         viewHistoryButton.setOnClickListener(new View.OnClickListener() {
@@ -96,7 +71,7 @@ public class GuessActivity extends AppCompatActivity {
     private void makeAgifyRequest(String name) {
         String url = "https://api.agify.io?name=" + name;
 
-        // new Volley request queue
+        // Volley request queue
         RequestQueue requestQueue = Volley.newRequestQueue(this);
 
         // JSON object request to fetch data from API
@@ -112,6 +87,7 @@ public class GuessActivity extends AppCompatActivity {
                             String message = "Hello " + nameEditText.getText().toString() +
                                     ", your age is predicted to be " + age;
                             resultTextView.setText(message);
+                            saveToHistory(name, String.valueOf(age));
                             nameEditText.getText().clear();
                         } catch (JSONException e) {
                             e.printStackTrace();
@@ -134,9 +110,10 @@ public class GuessActivity extends AppCompatActivity {
 
     // Save entry in history via SharedPreferences (extra feature)
     // Let's see if this works
-    private void saveToHistory(String entry) {
+    private void saveToHistory(String name, String age) {
         SharedPreferences preferences = getSharedPreferences("HistoryPreferences", Context.MODE_PRIVATE);
         Set<String> historySet = preferences.getStringSet("historySet", new HashSet<>());
+        String entry = "Hello " + name + ", your age is predicted to be " + age;
         historySet.add(entry);
         preferences.edit().putStringSet("historySet", historySet).apply();
     }

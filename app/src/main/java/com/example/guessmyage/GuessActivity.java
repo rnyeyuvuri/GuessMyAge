@@ -50,6 +50,7 @@ public class GuessActivity extends AppCompatActivity {
                 String name = nameEditText.getText().toString();
                 if (!name.isEmpty()) {
                     makeAgifyRequest(name);
+                    nameEditText.getText().clear();
                 } else {
                     Toast.makeText(GuessActivity.this, "Please enter a name", Toast.LENGTH_SHORT).show();
                 }
@@ -65,12 +66,13 @@ public class GuessActivity extends AppCompatActivity {
                 String age = resultTextView.getText().toString().replaceAll("[^0-9]", "");
 
                 if (!name.isEmpty() && !age.isEmpty()) {
-                    String message = "Hello " + name + ", your age is predicted to be " + age;
+                    String message = "If your name was " + name + ", you would be predicted to be " + age + " years old!";
                     resultTextView.setText(message);
 
                     // Save history
                     saveToHistory(message);
                 } else {
+                    // edit this
                     Toast.makeText(GuessActivity.this, "No data to save", Toast.LENGTH_SHORT).show();
                 }
             }

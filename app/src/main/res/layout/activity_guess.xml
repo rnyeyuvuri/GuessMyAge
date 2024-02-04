@@ -4,23 +4,26 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:padding="16dp"
-    android:background="@drawable/background">
+    android:background="@drawable/background"
+    android:layout_gravity="center">
+
+    <TextView
+        android:id="@+id/app_description"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:padding="22sp"
+        android:text="AGE GUESS is a fun and engaging app that explores the fascinating idea that names might influence our perceived age.
+            \nEver wondered if your name could provide a clue about how old you might be?"
+        android:textSize="20sp" />
 
     <EditText
         android:id="@+id/nameEditText"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="Enter Name"
+        android:layout_height="30dp"
+        android:layout_marginBottom="16dp"
         android:background="#a6e6d9"
-        android:layout_marginBottom="16dp" />
-
-    <TextView
-        android:id="@+id/app_description"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="App Description"
-        android:background="#a6e6d9"
-    android:layout_marginBottom="16dp" />
+        android:inputType="text"
+        android:hint="Enter Name" />
 
     <Button
         android:id="@+id/guessButton"
@@ -35,10 +38,10 @@
         android:id="@+id/saveButton"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Save Data"
+        android:layout_marginBottom="16dp"
         android:background="#e74c3c"
-    android:textColor="#ffffff"
-    android:layout_marginBottom="16dp" />
+        android:text="Save Data"
+        android:textColor="#ffffff" />
 
     <TextView
         android:id="@+id/resultTextView"
@@ -47,9 +50,8 @@
         android:text=""
         android:gravity="center"
         android:textSize="24sp"
-        android:layout_marginTop="200dp"
-        android:textColor="#ffffff"
-        android:background="#2c3e50"
+        android:textColor="#001f3f"
+        android:layout_marginTop="20dp"
         android:padding="16dp"
         android:layout_marginBottom="16dp" />
 

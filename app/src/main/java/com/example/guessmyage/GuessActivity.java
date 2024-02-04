@@ -1,10 +1,8 @@
 package com.example.guessmyage;
 
-// Import necessary packages
 import android.content.Context;
 import android.content.Intent;
-import android.net.Uri;
-import android.os.AsyncTask;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -14,21 +12,21 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.Volley;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
-import java.net.URL;
+import java.util.HashSet;
+import java.util.Set;
 
-// Main activity class for the guessing game
 public class GuessActivity extends AppCompatActivity {
 
-    // UI elements
     private EditText nameEditText;
     private TextView resultTextView;
     private Button guessButton;
@@ -39,38 +37,38 @@ public class GuessActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_guess);
 
-        // Initialize UI elements
+        // UI elements
         nameEditText = findViewById(R.id.nameEditText);
         resultTextView = findViewById(R.id.resultTextView);
         guessButton = findViewById(R.id.guessButton);
         saveButton = findViewById(R.id.saveButton);
 
-        // Listens to 'click' for the guess button
+        // sets click listener for "guess" button
         guessButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                // Get the entered name from the EditText
                 String name = nameEditText.getText().toString();
                 if (!name.isEmpty()) {
-                    // Execute an AsyncTask to fetch data from the Agify API
-                    new AgifyTask().execute(name);
+                    makeAgifyRequest(name);
                 } else {
                     Toast.makeText(GuessActivity.this, "Please enter a name", Toast.LENGTH_SHORT).show();
                 }
             }
         });
 
-        // Sets up click listener for the save button
+        // sets click listener for "save" button
         saveButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                // Get the entered name and age result from the UI
                 String name = nameEditText.getText().toString();
                 String age = resultTextView.getText().toString().replaceAll("[^0-9]", "");
 
                 if (!name.isEmpty() && !age.isEmpty()) {
-                    // Save name/age matching for offline viewing (Note for me: Implement this in future)
-                    Toast.makeText(GuessActivity.this, "Saved successfully", Toast.LENGTH_SHORT).show();
+                    String message = "Hello " + name + ", your age is predicted to be " + age;
+                    resultTextView.setText(message);
+
+                    // Save history
+                    saveToHistory(message);
                 } else {
                     Toast.makeText(GuessActivity.this, "No data to save", Toast.LENGTH_SHORT).show();
                 }
@@ -78,69 +76,57 @@ public class GuessActivity extends AppCompatActivity {
         });
     }
 
-    // AsyncTask fetches data from Agify API in the background
-    private class AgifyTask extends AsyncTask<String, Void, String> {
+    // Using Volley to to implement the API
+    private void makeAgifyRequest(String name) {
+        String url = "https://api.agify.io?name=" + name;
 
-        @Override
-        protected String doInBackground(String... names) {
-            String name = names[0];
-            try {
-                // Build the URL for the Agify API using the entered name
-                URL url = new URL("https://api.agify.io?name=" + name);
-                HttpURLConnection connection = null;
-                connection = (HttpURLConnection) url.openConnection();
-                connection.setRequestMethod("GET");
-                connection.connect();
+        // new Volley request queue
+        RequestQueue requestQueue = Volley.newRequestQueue(this);
 
-                // Read the API response
-                InputStream inputStream = connection.getInputStream();
-                BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
-                StringBuilder result = new StringBuilder();
-                String line;
-                while ((line = reader.readLine()) != null) {
-                    result.append(line);
-                }
+        // JSON object request to fetch data from API
+        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(
+                Request.Method.GET, url, null,
+                new Response.Listener<JSONObject>() {
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        try {
+                            int age = response.getInt("age");
 
-                return result.toString();
-            } catch (MalformedURLException e) {
-                e.printStackTrace();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+                            // Displays results
+                            String message = "Hello " + nameEditText.getText().toString() +
+                                    ", your age is predicted to be " + age;
+                            resultTextView.setText(message);
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                            // Note for me: Toast class in Android allows program to give small messages to user
+                            Toast.makeText(GuessActivity.this, "Error parsing response", Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        // add error handling
+                        Toast.makeText(GuessActivity.this, "Failed to fetch data", Toast.LENGTH_SHORT).show();
+                    }
+                });
 
-            return null;
-        }
-
-        @Override
-        protected void onPostExecute(String jsonResult) {
-            super.onPostExecute(jsonResult);
-            if (jsonResult != null) {
-                try {
-                    // Parse the JSON response from the Agify API
-                    JSONObject jsonObject = new JSONObject(jsonResult);
-                    int age = jsonObject.getInt("age");
-                    // Display the result in the UI
-                    String message = "Hello " + nameEditText.getText().toString() +
-                            ", your age is predicted to be " + age;
-                    resultTextView.setText(message);
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-            } else {
-                // Display a toast if fetching data fails
-                Toast.makeText(GuessActivity.this, "Failed to fetch data", Toast.LENGTH_SHORT).show();
-            }
-        }
+        // adding request (to queue so that it will then be taken to execution)
+        requestQueue.add(jsonObjectRequest);
     }
 
-    // Example of sharing data to other apps using the Android share sheet
-    private void shareData(String data) {
-        Intent sendIntent = new Intent();
-        sendIntent.setAction(Intent.ACTION_SEND);
-        sendIntent.putExtra(Intent.EXTRA_TEXT, data);
-        sendIntent.setType("text/plain");
+    // Save entry in history via SharedPreferences (extra feature)
+    // Let's see if this works
+    private void saveToHistory(String entry) {
+        SharedPreferences preferences = getSharedPreferences("HistoryPreferences", Context.MODE_PRIVATE);
 
-        Intent shareIntent = Intent.createChooser(sendIntent, null);
-        startActivity(shareIntent);
+        // Retrieve the existing set of history entries or create a new empty set
+        Set<String> historySet = preferences.getStringSet("historySet", new HashSet<>());
+
+        // Add the new entry to the set
+        historySet.add(entry);
+
+        // Save the updated set back to SharedPreferences
+        preferences.edit().putStringSet("historySet", historySet).apply();
     }
 }

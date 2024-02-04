@@ -3,8 +3,10 @@ package com.example.guessmyage;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
@@ -38,5 +40,8 @@ public class HistoryActivity extends AppCompatActivity {
         return new ArrayList<>(historySet);
     }
 
-
+    public void onBackToHomeButtonClick(View view) {
+        Intent intent = new Intent(this, MainActivity.class);
+        startActivity(intent);
+    }
 }

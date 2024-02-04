@@ -36,15 +36,6 @@
         android:layout_marginBottom="16dp" />
 
     <Button
-        android:id="@+id/saveButton"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="16dp"
-        android:background="#e74c3c"
-        android:text="Save Data"
-        android:textColor="#ffffff" />
-
-    <Button
         android:id="@+id/viewHistoryButton"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

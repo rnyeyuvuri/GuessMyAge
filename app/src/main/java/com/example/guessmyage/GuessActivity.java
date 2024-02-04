@@ -30,7 +30,6 @@ public class GuessActivity extends AppCompatActivity {
     private EditText nameEditText;
     private TextView resultTextView;
     private Button guessButton;
-    private Button saveButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,7 +40,6 @@ public class GuessActivity extends AppCompatActivity {
         nameEditText = findViewById(R.id.nameEditText);
         resultTextView = findViewById(R.id.resultTextView);
         guessButton = findViewById(R.id.guessButton);
-        saveButton = findViewById(R.id.saveButton);
 
         // sets click listener for "guess" button
         guessButton.setOnClickListener(new View.OnClickListener() {

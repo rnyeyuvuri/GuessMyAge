@@ -80,6 +80,16 @@ public class GuessActivity extends AppCompatActivity {
                 nameEditText.getText().clear();
             }
         });
+
+        // adding navigation to history page
+        Button viewHistoryButton = findViewById(R.id.viewHistoryButton);
+        viewHistoryButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(GuessActivity.this, HistoryActivity.class);
+                startActivity(intent);
+            }
+        });
     }
 
     // Using Volley to to implement the API

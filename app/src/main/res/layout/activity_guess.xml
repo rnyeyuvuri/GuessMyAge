@@ -2,6 +2,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
     android:padding="16dp"
     android:background="@drawable/background"
@@ -44,14 +45,16 @@
         android:textColor="#ffffff" />
 
     <Button
-        android:id="@+id/historyButton"
+        android:id="@+id/viewHistoryButton"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="History"
+        android:text="View History"
         android:layout_marginTop="16dp"
         android:background="#2c3e50"
         android:textColor="#ffffff"
-        android:onClick="onHistoryButtonClick"/>
+        app:layout_constraintTop_toBottomOf="@+id/start_button"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"/>
 
     <TextView
         android:id="@+id/resultTextView"

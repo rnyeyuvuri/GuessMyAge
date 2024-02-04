@@ -61,6 +61,7 @@ public class GuessActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 String name = nameEditText.getText().toString();
+                //
                 String age = resultTextView.getText().toString().replaceAll("[^0-9]", "");
 
                 if (!name.isEmpty() && !age.isEmpty()) {
